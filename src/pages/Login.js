@@ -39,12 +39,17 @@ class Login extends React.Component {
     history.push('/game');
   };
 
+  goToSettings = () => {
+    const { history } = this.props;
+    history.push('/settings');
+  };
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <img src={ logo } className="App-logo" alt="logo" />
-          <p>Cria Pull Request</p>
+          <h1>Login</h1>
           <input
             type="email"
             data-testid="input-gravatar-email"
@@ -65,6 +70,12 @@ class Login extends React.Component {
             onClick={ this.handleLogin }
           >
             Play
+          </button>
+          <button
+            data-testid="btn-settings"
+            onClick={ this.goToSettings }
+          >
+            Settings
           </button>
         </header>
       </div>
