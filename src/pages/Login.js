@@ -1,5 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import logo from '../trivia.png';
+import { fetchAPIToken } from '../redux/actions';
 
 class Login extends React.Component {
   state = {
@@ -22,6 +25,18 @@ class Login extends React.Component {
     const isNameValid = name.length > 0;
     // se o email e o nome forem válidos, retorna falso, o que ativa o botão
     return !(isEmailValid && isNameValid);
+  };
+
+  handleLogin = async () => {
+    const { history } = this.props;
+
+    const data = await fetchAPIToken();
+
+    // precisa do stringify se não tiver pegar um objeto inteiro?
+    // localStorage.setItem('token', JSON.stringify(data.token));
+    localStorage.setItem('token', data.token);
+
+    history.push('/game');
   };
 
   render() {
@@ -47,6 +62,7 @@ class Login extends React.Component {
           <button
             data-testid="btn-play"
             disabled={ this.handleDisable() }
+            onClick={ this.handleLogin }
           >
             Play
           </button>
@@ -56,4 +72,11 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  // dispatch: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+export default connect()(Login);
