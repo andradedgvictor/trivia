@@ -12,6 +12,8 @@ class Game extends React.Component {
     isLoaded: false,
     // correctAnswer,
     // shuffledAnswers,
+    timer: 30,
+    // isDisabled: false,
   };
 
   async componentDidMount() {
@@ -45,11 +47,29 @@ class Game extends React.Component {
         correctAnswer: correct,
         shuffledAnswers: shuffledArray,
       });
+
+      this.myInterval = setInterval(() => {
+        this.setState((prevState) => ({
+          timer: prevState.timer - 1,
+        }));
+      }, 1000);
     } catch (error) {
       console.log(error);
       history.push('/');
       localStorage.removeItem('token');
     }
+  }
+
+  componentDidUpdate() {
+    const { timer } = this.state;
+
+    if (timer === 0) {
+      clearInterval(this.myInterval);
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.myInterval);
   }
 
   getGravatarURL = (email) => {
@@ -77,7 +97,8 @@ class Game extends React.Component {
   render() {
     const { name, score, email } = this.props;
     const {
-      questions, questionIndex, isLoaded, shuffledAnswers, correctAnswer,
+      questions, questionIndex, isLoaded, shuffledAnswers,
+      correctAnswer, timer,
     } = this.state;
 
     const startingNumber = -1;
@@ -98,6 +119,7 @@ class Game extends React.Component {
           <div>
             {isLoaded ? (
               <>
+                <p>{ timer }</p>
                 <h1 data-testid="question-category">
                   {questions.results[questionIndex].category}
                 </h1>
@@ -114,6 +136,7 @@ class Game extends React.Component {
                         data-testid={ id }
                         id={ id }
                         onClick={ (e) => this.answerQuestion(e) }
+                        disabled={ timer === 0 }
                       >
                         {answer}
                       </button>
