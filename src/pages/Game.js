@@ -58,6 +58,22 @@ class Game extends React.Component {
     return url;
   };
 
+  answerQuestion = ({ target }) => {
+    const selected = document.querySelector(`#${target.id}`);
+    const parent = selected.parentElement;
+    const allButtons = parent.querySelectorAll('*');
+
+    allButtons[0].style.border = '3px solid red';
+
+    for (let index = 0; index < allButtons.length; index += 1) {
+      if (allButtons[index].id === 'correct-answer') {
+        allButtons[index].style.border = '3px solid rgb(6, 240, 15)';
+      } else {
+        allButtons[index].style.border = '3px solid red';
+      }
+    }
+  };
+
   render() {
     const { name, score, email } = this.props;
     const {
@@ -92,7 +108,16 @@ class Game extends React.Component {
                   { shuffledAnswers.map((answer, index) => {
                     const id = answer === correctAnswer
                       ? 'correct-answer' : `wrong-answer-${(incorrectId += 1)}`;
-                    return <button key={ index } data-testid={ id }>{answer}</button>;
+                    return (
+                      <button
+                        key={ index }
+                        data-testid={ id }
+                        id={ id }
+                        onClick={ (e) => this.answerQuestion(e) }
+                      >
+                        {answer}
+                      </button>
+                    );
                   }) }
                 </div>
               </>
