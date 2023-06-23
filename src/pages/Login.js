@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import logo from '../trivia.png';
-import { fetchAPIToken } from '../redux/actions';
+import { fetchAPIToken, saveEmailAndName } from '../redux/actions';
 
 class Login extends React.Component {
   state = {
@@ -29,13 +29,16 @@ class Login extends React.Component {
   };
 
   handleLogin = async () => {
-    const { history } = this.props;
+    const { history, dispatch } = this.props;
+    const { email, name } = this.state;
 
     const data = await fetchAPIToken();
 
     // precisa do stringify se não tiver pegar um objeto inteiro?
     // localStorage.setItem('token', JSON.stringify(data.token));
     localStorage.setItem('token', data.token);
+
+    dispatch(saveEmailAndName(email, name));
 
     history.push('/game');
   };
@@ -85,7 +88,7 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-  // dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,

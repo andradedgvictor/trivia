@@ -1,3 +1,5 @@
+import { SAVE_EMAIL_AND_NAME } from '../actions';
+
 const INITIAL_STATE = {
   name: '',
   assertions: 0,
@@ -5,10 +7,16 @@ const INITIAL_STATE = {
   gravatarEmail: '',
 };
 
-const playerReducer = (state = INITIAL_STATE, action) => {
+const player = (state = INITIAL_STATE, action) => {
   switch (action.type) {
+  case SAVE_EMAIL_AND_NAME:
+    return {
+      ...state,
+      gravatarEmail: action.email,
+      name: action.name,
+    };
   default: return state;
   }
 };
 
-export default playerReducer;
+export default player;
