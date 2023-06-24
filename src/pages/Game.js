@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
 import logo from '../trivia.png';
-import { fetchAPIQuestions } from '../redux/actions';
+import { fetchAPIQuestions, sumScore } from '../redux/actions';
 
 class Game extends React.Component {
   state = {
@@ -39,6 +39,7 @@ class Game extends React.Component {
         isLoaded: true,
         correctAnswer: answers[0],
         shuffledAnswers: shuffledArray,
+        difficulty: questions.results[questionIndex].difficulty,
       });
       // configura o timer descrescente de 30 segundos
       const oneSecond = 1000;
@@ -76,23 +77,46 @@ class Game extends React.Component {
     const selected = document.querySelector(`#${target.id}`);
     const parent = selected.parentElement;
     const allButtons = parent.querySelectorAll('*');
+    const correctAnswer = 'correct-answer';
 
-    allButtons[0].style.border = '3px solid red';
+    allButtons.forEach((button) => {
+      button.style.border = button.id === correctAnswer
+        ? '3px solid rgb(6, 240, 15)' : '3px solid red';
+    });
 
-    for (let index = 0; index < allButtons.length; index += 1) {
-      if (allButtons[index].id === 'correct-answer') {
-        allButtons[index].style.border = '3px solid rgb(6, 240, 15)';
-      } else {
-        allButtons[index].style.border = '3px solid red';
-      }
+    if (target.id === correctAnswer) {
+      this.calculateScore();
     }
+  };
+
+  calculateScore = () => {
+    const { dispatch } = this.props;
+    const { timer, difficulty } = this.state;
+    let difficultyBonus;
+    const hard = 3;
+
+    if (difficulty === 'hard') {
+      difficultyBonus = hard;
+    } else if (difficulty === 'medium') {
+      difficultyBonus = 2;
+    } else {
+      difficultyBonus = 1;
+    }
+
+    console.log(typeof timer);
+    console.log(typeof difficultyBonus);
+
+    const initialPoints = 10;
+    const totalPoints = initialPoints + (timer * difficultyBonus);
+    // const totalPoints = initialPoints;
+    dispatch(sumScore(totalPoints));
   };
 
   render() {
     const { name, score, email } = this.props;
     const {
       questions, questionIndex, isLoaded, shuffledAnswers,
-      correctAnswer, timer,
+      correctAnswer, timer, difficulty,
     } = this.state;
       // startingNumber começa com -1 para que o id da primeira resposta errada seja 0
     const startingNumber = -1;
@@ -114,6 +138,7 @@ class Game extends React.Component {
             {isLoaded ? (
               <>
                 <p>{ timer }</p>
+                <p>{ difficulty }</p>
                 <h1 data-testid="question-category">
                   {questions.results[questionIndex].category}
                 </h1>
@@ -155,7 +180,7 @@ const mapStateToProps = (state) => ({
 });
 
 Game.propTypes = {
-  // dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
