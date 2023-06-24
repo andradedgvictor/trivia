@@ -7,13 +7,9 @@ import { fetchAPIQuestions } from '../redux/actions';
 
 class Game extends React.Component {
   state = {
-    // questions: {},
     questionIndex: 0,
     isLoaded: false,
-    // correctAnswer,
-    // shuffledAnswers,
     timer: 30,
-    // isDisabled: false,
   };
 
   async componentDidMount() {
@@ -24,35 +20,33 @@ class Game extends React.Component {
       const token = localStorage.getItem('token');
       const questions = await fetchAPIQuestions(token);
       const expiredTokenNumber = 3;
-
+      // checa se o toke está expirado e retorna pro login se sim
       if (questions.response_code === expiredTokenNumber) {
         history.push('/');
         localStorage.removeItem('token');
       }
-
+      // salvar todas as respostas em um array
       const answers = [
         questions.results[questionIndex].correct_answer,
         ...questions.results[questionIndex].incorrect_answers,
       ];
-
-      const correct = answers[0];
-
-      // shuffleAnswers = (array) => [...array].sort(() => Math.random() - 0.5);
+      // 'embaralha' o array
       const sortRandomlyNumber = 0.5;
       const shuffledArray = [...answers].sort(() => Math.random() - sortRandomlyNumber);
 
       this.setState({
         questions,
         isLoaded: true,
-        correctAnswer: correct,
+        correctAnswer: answers[0],
         shuffledAnswers: shuffledArray,
       });
-
-      this.myInterval = setInterval(() => {
+      // configura o timer descrescente de 30 segundos
+      const oneSecond = 1000;
+      this.setTimer = setInterval(() => {
         this.setState((prevState) => ({
           timer: prevState.timer - 1,
         }));
-      }, 1000);
+      }, oneSecond);
     } catch (error) {
       console.log(error);
       history.push('/');
@@ -64,12 +58,12 @@ class Game extends React.Component {
     const { timer } = this.state;
 
     if (timer === 0) {
-      clearInterval(this.myInterval);
+      clearInterval(this.setTimer);
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.myInterval);
+    clearInterval(this.setTimer);
   }
 
   getGravatarURL = (email) => {
@@ -100,7 +94,7 @@ class Game extends React.Component {
       questions, questionIndex, isLoaded, shuffledAnswers,
       correctAnswer, timer,
     } = this.state;
-
+      // startingNumber começa com -1 para que o id da primeira resposta errada seja 0
     const startingNumber = -1;
     let incorrectId = startingNumber;
 
