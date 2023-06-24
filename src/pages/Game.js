@@ -57,9 +57,12 @@ class Game extends React.Component {
   }
 
   componentDidUpdate() {
-    const { timer } = this.state;
+    const { timer, clickedAnswer } = this.state;
 
     if (timer === 0) {
+      clearInterval(this.setTimer);
+    }
+    if (clickedAnswer === true) {
       clearInterval(this.setTimer);
     }
   }
@@ -111,6 +114,50 @@ class Game extends React.Component {
     dispatch(sumScore(totalPoints));
   };
 
+  goToNextQuestion = () => {
+    const { history } = this.props;
+    const { questionIndex, questions } = this.state;
+    const maxIndex = 4;
+
+    if (questionIndex < maxIndex) {
+      // this.setState({ questionIndex: questionIndex + 1 });
+
+      // const selected = document.querySelector(`#${target.id}`);
+      const parent = document.querySelector('#answer-options');
+      const allButtons = parent.querySelectorAll('*');
+
+      allButtons.forEach((button) => {
+        button.style.border = 'revert';
+      });
+
+      const answers = [
+        questions.results[questionIndex + 1].correct_answer,
+        ...questions.results[questionIndex + 1].incorrect_answers,
+      ];
+      // 'embaralha' o array
+      const sortRandomlyNumber = 0.5;
+      const shuffledArray = [...answers].sort(() => Math.random() - sortRandomlyNumber);
+
+      this.setState({
+        questionIndex: questionIndex + 1,
+        correctAnswer: answers[0],
+        shuffledAnswers: shuffledArray,
+        difficulty: questions.results[questionIndex + 1].difficulty,
+      });
+
+      // configura o timer descrescente de 30 segundos
+      this.setState({ timer: 30, clickedAnswer: false });
+      const oneSecond = 1000;
+      this.setTimer = setInterval(() => {
+        this.setState((prevState) => ({
+          timer: prevState.timer - 1,
+        }));
+      }, oneSecond);
+    } else {
+      history.push('/feedback');
+    }
+  };
+
   render() {
     const { name, score, email } = this.props;
     const {
@@ -144,7 +191,7 @@ class Game extends React.Component {
                 <p data-testid="question-text">
                   {questions.results[questionIndex].question}
                 </p>
-                <div data-testid="answer-options">
+                <div data-testid="answer-options" id="answer-options">
                   { shuffledAnswers.map((answer, index) => {
                     const id = answer === correctAnswer
                       ? 'correct-answer' : `wrong-answer-${(incorrectId += 1)}`;
@@ -160,14 +207,17 @@ class Game extends React.Component {
                       </button>
                     );
                   }) }
+                </div>
+                <div>
                   { (timer === 0 || clickedAnswer === true)
-                  && (
-                    <button
-                      data-testid="btn-next"
-                    >
-                      Next
-                    </button>
-                  )}
+                    && (
+                      <button
+                        data-testid="btn-next"
+                        onClick={ this.goToNextQuestion }
+                      >
+                        Next
+                      </button>
+                    )}
                 </div>
               </>
             ) : (
