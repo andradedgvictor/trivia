@@ -10,6 +10,7 @@ class Game extends React.Component {
     questionIndex: 0,
     isLoaded: false,
     timer: 30,
+    clickedAnswer: false,
   };
 
   async componentDidMount() {
@@ -74,6 +75,8 @@ class Game extends React.Component {
   };
 
   answerQuestion = ({ target }) => {
+    this.setState({ clickedAnswer: true });
+
     const selected = document.querySelector(`#${target.id}`);
     const parent = selected.parentElement;
     const allButtons = parent.querySelectorAll('*');
@@ -103,12 +106,8 @@ class Game extends React.Component {
       difficultyBonus = 1;
     }
 
-    console.log(typeof timer);
-    console.log(typeof difficultyBonus);
-
     const initialPoints = 10;
     const totalPoints = initialPoints + (timer * difficultyBonus);
-    // const totalPoints = initialPoints;
     dispatch(sumScore(totalPoints));
   };
 
@@ -116,7 +115,7 @@ class Game extends React.Component {
     const { name, score, email } = this.props;
     const {
       questions, questionIndex, isLoaded, shuffledAnswers,
-      correctAnswer, timer, difficulty,
+      correctAnswer, timer, difficulty, clickedAnswer,
     } = this.state;
       // startingNumber começa com -1 para que o id da primeira resposta errada seja 0
     const startingNumber = -1;
@@ -161,6 +160,14 @@ class Game extends React.Component {
                       </button>
                     );
                   }) }
+                  { (timer === 0 || clickedAnswer === true)
+                  && (
+                    <button
+                      data-testid="btn-next"
+                    >
+                      Next
+                    </button>
+                  )}
                 </div>
               </>
             ) : (
