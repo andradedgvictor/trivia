@@ -19,6 +19,7 @@ const player = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       score: state.score + action.totalPoints,
+      assertions: state.assertions + 1,
       // score: player.score + action.totalPoints,
     };
   default: return state;
