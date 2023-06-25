@@ -5,6 +5,7 @@ import { act } from 'react-dom/test-utils';
 import renderWithRouterAndRedux from './helpers/renderWithRouterAndRedux';
 import Login from '../pages/Login';
 import App from '../App';
+import { fetchAPIQuestions } from '../redux/actions';
 
 const mockGetRequest = {
   "response_code":0,

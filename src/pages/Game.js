@@ -21,7 +21,7 @@ class Game extends React.Component {
       const token = localStorage.getItem('token');
       const questions = await fetchAPIQuestions(token);
       const expiredTokenNumber = 3;
-      // checa se o toke está expirado e retorna pro login se sim
+      // checa se o token está expirado e retorna pro login se sim
       if (questions.response_code === expiredTokenNumber) {
         history.push('/');
         localStorage.removeItem('token');
@@ -45,8 +45,8 @@ class Game extends React.Component {
       // configura o timer descrescente de 30 segundos
       const oneSecond = 1000;
       this.setTimer = setInterval(() => {
-        this.setState((prevState) => ({
-          timer: prevState.timer - 1,
+        this.setState((state) => ({
+          timer: state.timer - 1,
         }));
       }, oneSecond);
     } catch (error) {
@@ -147,10 +147,11 @@ class Game extends React.Component {
 
       // configura o timer descrescente de 30 segundos
       this.setState({ timer: 30, clickedAnswer: false });
+
       const oneSecond = 1000;
       this.setTimer = setInterval(() => {
-        this.setState((prevState) => ({
-          timer: prevState.timer - 1,
+        this.setState((state) => ({
+          timer: state.timer - 1,
         }));
       }, oneSecond);
     } else {
@@ -183,7 +184,7 @@ class Game extends React.Component {
           <div>
             {isLoaded ? (
               <>
-                <p>{ timer }</p>
+                <p id="timer">{ timer }</p>
                 <p>{ difficulty }</p>
                 <h1 data-testid="question-category">
                   {questions.results[questionIndex].category}
