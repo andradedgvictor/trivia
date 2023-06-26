@@ -2,13 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import logo from '../trivia.png';
-import { fetchAPIToken, saveEmailAndName } from '../redux/actions';
+import { fetchAPIToken, restoreState, saveEmailAndName } from '../redux/actions';
 
 class Login extends React.Component {
   state = {
     email: '',
     name: '',
   };
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+
+    dispatch(restoreState());
+  }
 
   handleChange = ({ target }) => {
     const { name, value } = target;

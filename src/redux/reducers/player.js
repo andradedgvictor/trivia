@@ -1,4 +1,4 @@
-import { SAVE_EMAIL_AND_NAME, SUM_SCORE } from '../actions';
+import { RESTORE_STATE, SAVE_EMAIL_AND_NAME, SUM_SCORE } from '../actions';
 
 const INITIAL_STATE = {
   name: '',
@@ -22,6 +22,8 @@ const player = (state = INITIAL_STATE, action) => {
       assertions: state.assertions + 1,
       // score: player.score + action.totalPoints,
     };
+  case RESTORE_STATE:
+    return INITIAL_STATE;
   default: return state;
   }
 };

@@ -1,5 +1,6 @@
 export const SAVE_EMAIL_AND_NAME = 'SAVE_EMAIL_AND_NAME';
 export const SUM_SCORE = 'SUM_SCORE';
+export const RESTORE_STATE = 'RESTORE_STATE';
 
 export async function fetchAPIToken() {
   const response = await fetch('https://opentdb.com/api_token.php?command=request');
@@ -26,4 +27,8 @@ export async function fetchAPIQuestions(token) {
 export const sumScore = (totalPoints) => ({
   type: SUM_SCORE,
   totalPoints,
+});
+
+export const restoreState = () => ({
+  type: RESTORE_STATE,
 });
