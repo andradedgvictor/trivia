@@ -1,0 +1,8 @@
+.game-page {
+  background-image: url('../assets/background-game.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { fetchAPIToken, restoreState, saveEmailAndName } from '../redux/actions';
 import logo from '../assets/logo trivia.png';
 
-import style from '../styles/Login.module.css';
+import styles from '../styles/Login.module.css';
 
 class Login extends React.Component {
   state = {
@@ -59,40 +59,42 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className={ style.container }>
-        <div className={ style['logo-container'] }>
-          <img src={ logo } className="App-logo" alt="logo" />
-        </div>
-        <div className={ style['login-container'] }>
-          <input
-            type="email"
-            data-testid="input-gravatar-email"
-            placeholder="Qual é o seu e-mail do gravatar?"
-            name="email"
-            onChange={ this.handleChange }
-          />
-          <input
-            type="text"
-            data-testid="input-player-name"
-            placeholder="Qual é o seu nome?"
-            name="name"
-            onChange={ this.handleChange }
-          />
-          <button
-            data-testid="btn-play"
-            disabled={ this.handleDisable() }
-            onClick={ this.handleLogin }
-            className={ style['play-btn'] }
-          >
-            JOGAR
-          </button>
-          <button
-            data-testid="btn-settings"
-            onClick={ this.goToSettings }
-            className={ style['settings-btn'] }
-          >
-            Configurações
-          </button>
+      <div className={ styles['login-page'] }>
+        <div className={ styles['main-container'] }>
+          <div className={ styles['logo-container'] }>
+            <img src={ logo } className="App-logo" alt="logo" />
+          </div>
+          <div className={ styles['login-container'] }>
+            <input
+              type="email"
+              data-testid="input-gravatar-email"
+              placeholder="Qual é o seu e-mail do gravatar?"
+              name="email"
+              onChange={ this.handleChange }
+            />
+            <input
+              type="text"
+              data-testid="input-player-name"
+              placeholder="Qual é o seu nome?"
+              name="name"
+              onChange={ this.handleChange }
+            />
+            <button
+              data-testid="btn-play"
+              disabled={ this.handleDisable() }
+              onClick={ this.handleLogin }
+              className={ styles['play-btn'] }
+            >
+              JOGAR
+            </button>
+            <button
+              data-testid="btn-settings"
+              onClick={ this.goToSettings }
+              className={ styles['settings-btn'] }
+            >
+              Configurações
+            </button>
+          </div>
         </div>
       </div>
     );

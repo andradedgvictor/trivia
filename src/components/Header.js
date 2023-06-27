@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
-import logo from '../trivia.png';
-import './Header.css';
+
+import scoreImg from '../assets/🦆 icon _Star_.png';
+
+import styles from '../styles/Header.module.css';
 
 class Header extends React.Component {
   getGravatarURL = (email) => {
@@ -16,17 +18,19 @@ class Header extends React.Component {
     const { name, score, email } = this.props;
 
     return (
-      <div className="App">
-        <header className="Header">
-          <img src={ logo } className="App-logo" alt="logo" />
-          <p data-testid="header-player-name">{ name }</p>
+      <div className={ styles['header-container'] }>
+        <div className={ styles['profile-container'] }>
           <img
             src={ this.getGravatarURL(email) }
             alt="gravatar"
             data-testid="header-profile-picture"
           />
-          <p data-testid="header-score">{ score }</p>
-        </header>
+          <p data-testid="header-player-name">{ name }</p>
+        </div>
+        <div className={ styles['score-container'] }>
+          <img src={ scoreImg } alt="score-img" />
+          <p data-testid="header-score">{ `Pontos: ${score}` }</p>
+        </div>
       </div>
     );
   }
