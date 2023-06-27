@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import logo from '../trivia.png';
+
 import { fetchAPIToken, restoreState, saveEmailAndName } from '../redux/actions';
+import logo from '../assets/logo trivia.png';
+
+import style from '../styles/Login.module.css';
 
 class Login extends React.Component {
   state = {
@@ -56,10 +59,11 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
+      <div className={ style.container }>
+        <div className={ style['logo-container'] }>
           <img src={ logo } className="App-logo" alt="logo" />
-          <h1>Login</h1>
+        </div>
+        <div className={ style['login-container'] }>
           <input
             type="email"
             data-testid="input-gravatar-email"
@@ -78,16 +82,18 @@ class Login extends React.Component {
             data-testid="btn-play"
             disabled={ this.handleDisable() }
             onClick={ this.handleLogin }
+            className={ style['play-btn'] }
           >
-            Play
+            JOGAR
           </button>
           <button
             data-testid="btn-settings"
             onClick={ this.goToSettings }
+            className={ style['settings-btn'] }
           >
-            Settings
+            Configurações
           </button>
-        </header>
+        </div>
       </div>
     );
   }
