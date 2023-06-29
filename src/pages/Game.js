@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import logo from '../assets/logo trivia.png';
+import timerIcon from '../assets/🦆 icon _timer_.png';
+import correctIcon from '../assets/correct.png';
+import wrongIcon from '../assets/wrong.png';
+import loadingIcon from '../assets/loading.gif';
 import { fetchAPIQuestions, sumScore } from '../redux/actions';
 import Header from '../components/Header';
 
 import styles from '../styles/Game.module.css';
 
-class Game extends React.Component {
+class Game extends Component {
   state = {
     questionIndex: 0,
     isLoaded: false,
@@ -24,34 +28,26 @@ class Game extends React.Component {
       const token = localStorage.getItem('token');
       const questions = await fetchAPIQuestions(token);
       const expiredTokenNumber = 3;
-      // checa se o token está expirado e retorna pro login se sim
+
       if (questions.response_code === expiredTokenNumber) {
         history.push('/');
         localStorage.removeItem('token');
+        return;
       }
-      // salvar todas as respostas em um array
-      const answers = [
-        questions.results[questionIndex].correct_answer,
-        ...questions.results[questionIndex].incorrect_answers,
-      ];
-      // 'embaralha' o array
-      const sortRandomlyNumber = 0.5;
-      const shuffledArray = [...answers].sort(() => Math.random() - sortRandomlyNumber);
+
+      const { correct_answer, incorrect_answers, difficulty } = questions.results[questionIndex];
+      const answers = [correct_answer, ...incorrect_answers];
+      const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
 
       this.setState({
         questions,
         isLoaded: true,
         correctAnswer: answers[0],
-        shuffledAnswers: shuffledArray,
-        difficulty: questions.results[questionIndex].difficulty,
+        shuffledAnswers,
+        difficulty,
       });
-      // configura o timer descrescente de 30 segundos
-      const oneSecond = 1000;
-      this.setTimer = setInterval(() => {
-        this.setState((state) => ({
-          timer: state.timer - 1,
-        }));
-      }, oneSecond);
+
+      this.setTimerInterval();
     } catch (error) {
       console.log(error);
       history.push('/');
@@ -62,10 +58,7 @@ class Game extends React.Component {
   componentDidUpdate() {
     const { timer, clickedAnswer } = this.state;
 
-    if (timer === 0) {
-      clearInterval(this.setTimer);
-    }
-    if (clickedAnswer === true) {
+    if (timer === 0 || clickedAnswer) {
       clearInterval(this.setTimer);
     }
   }
@@ -73,6 +66,15 @@ class Game extends React.Component {
   componentWillUnmount() {
     clearInterval(this.setTimer);
   }
+
+  setTimerInterval = () => {
+    const oneSecond = 1000;
+    this.setTimer = setInterval(() => {
+      this.setState((prevState) => ({
+        timer: prevState.timer - 1,
+      }));
+    }, oneSecond);
+  };
 
   answerQuestion = ({ target }) => {
     this.setState({ clickedAnswer: true });
@@ -84,7 +86,7 @@ class Game extends React.Component {
 
     allButtons.forEach((button) => {
       button.style.border = button.id === correctAnswer
-        ? '3px solid rgb(6, 240, 15)' : '3px solid red';
+        ? '1px solid rgb(6, 240, 15)' : '1px solid red';
     });
 
     if (target.id === correctAnswer) {
@@ -95,19 +97,10 @@ class Game extends React.Component {
   calculateScore = () => {
     const { dispatch } = this.props;
     const { timer, difficulty } = this.state;
-    let difficultyBonus;
-    const hard = 3;
-
-    if (difficulty === 'hard') {
-      difficultyBonus = hard;
-    } else if (difficulty === 'medium') {
-      difficultyBonus = 2;
-    } else {
-      difficultyBonus = 1;
-    }
-
-    const initialPoints = 10;
-    const totalPoints = initialPoints + (timer * difficultyBonus);
+    const minDifficulty = 3;
+    const difficultyBonus = difficulty === 'hard' ? minDifficulty : difficulty === 'medium' ? 2 : 1;
+    const minPoints = 10;
+    const totalPoints = minPoints + timer * difficultyBonus;
     dispatch(sumScore(totalPoints));
   };
 
@@ -116,52 +109,39 @@ class Game extends React.Component {
     const { questionIndex, questions } = this.state;
     const maxIndex = 4;
 
-    if (questionIndex < maxIndex) {
-      // this.setState({ questionIndex: questionIndex + 1 });
-
-      // const selected = document.querySelector(`#${target.id}`);
-      const parent = document.querySelector('#answer-options');
-      const allButtons = parent.querySelectorAll('*');
-
-      allButtons.forEach((button) => {
-        button.style.border = 'revert';
-      });
-
-      const answers = [
-        questions.results[questionIndex + 1].correct_answer,
-        ...questions.results[questionIndex + 1].incorrect_answers,
-      ];
-      // 'embaralha' o array
-      const sortRandomlyNumber = 0.5;
-      const shuffledArray = [...answers].sort(() => Math.random() - sortRandomlyNumber);
-
-      this.setState({
-        questionIndex: questionIndex + 1,
-        correctAnswer: answers[0],
-        shuffledAnswers: shuffledArray,
-        difficulty: questions.results[questionIndex + 1].difficulty,
-      });
-
-      // configura o timer descrescente de 30 segundos
-      this.setState({ timer: 30, clickedAnswer: false });
-
-      const oneSecond = 1000;
-      this.setTimer = setInterval(() => {
-        this.setState((state) => ({
-          timer: state.timer - 1,
-        }));
-      }, oneSecond);
-    } else {
+    if (questionIndex >= maxIndex) {
       history.push('/feedback');
+      return;
     }
+
+    const parent = document.querySelector('#answer-options');
+    const allButtons = parent.querySelectorAll('*');
+
+    allButtons.forEach((button) => {
+      button.style.border = 'revert';
+    });
+
+    const { correct_answer, incorrect_answers, difficulty } = questions.results[questionIndex + 1];
+    const answers = [correct_answer, ...incorrect_answers];
+    const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
+
+    this.setState((prevState) => ({
+      questionIndex: prevState.questionIndex + 1,
+      correctAnswer: answers[0],
+      shuffledAnswers,
+      difficulty,
+      timer: 30,
+      clickedAnswer: false,
+    }));
+
+    this.setTimerInterval();
   };
 
   render() {
     const {
-      questions, questionIndex, isLoaded, shuffledAnswers,
-      correctAnswer, timer, difficulty, clickedAnswer,
+      questions, questionIndex, isLoaded,
+      shuffledAnswers, correctAnswer, timer, clickedAnswer,
     } = this.state;
-      // startingNumber começa com -1 para que o id da primeira resposta errada seja 0
     const startingNumber = -1;
     let incorrectId = startingNumber;
 
@@ -169,51 +149,87 @@ class Game extends React.Component {
       <div className={ styles['game-page'] }>
         <div className={ styles['game-container'] }>
           <Header />
-          <img src={ logo } className="App-logo" alt="logo" />
-          <div>
+          <div className={ styles['trivia-container'] }>
+            <div className={ styles.logo }>
+              <img src={ logo } className="App-logo" alt="logo" />
+            </div>
             {isLoaded ? (
               <>
-                <p id="timer">{ timer }</p>
-                <p>{ difficulty }</p>
-                <h1 data-testid="question-category">
-                  {questions.results[questionIndex].category}
-                </h1>
-                <p data-testid="question-text">
-                  {questions.results[questionIndex].question}
-                </p>
-                <div data-testid="answer-options" id="answer-options">
-                  { shuffledAnswers.map((answer, index) => {
-                    const id = answer === correctAnswer
-                      ? 'correct-answer' : `wrong-answer-${(incorrectId += 1)}`;
-                    return (
-                      <button
-                        key={ index }
-                        data-testid={ id }
-                        id={ id }
-                        onClick={ (e) => this.answerQuestion(e) }
-                        disabled={ timer === 0 }
-                      >
-                        {answer}
-                      </button>
-                    );
-                  }) }
+                <div className={ styles['question-container'] }>
+                  <div className={ styles['category-container'] }>
+                    <h1
+                      data-testid="question-category"
+                    >
+                      {questions.results[questionIndex].category}
+                    </h1>
+                  </div>
+                  <div className={ styles['question-text-container'] }>
+                    <p
+                      data-testid="question-text"
+                    >
+                      {questions.results[questionIndex].question.split(':')[0]}
+                    </p>
+                  </div>
+                  <div className={ styles['timer-container'] }>
+                    <img src={ timerIcon } alt="timer-icon" />
+                    <p id="timer">{`Tempo: ${timer}s`}</p>
+                  </div>
                 </div>
-                <div>
-                  { (timer === 0 || clickedAnswer === true)
-                    && (
-                      <button
-                        data-testid="btn-next"
-                        onClick={ this.goToNextQuestion }
-                      >
-                        Next
+                <div className={ styles['answer-container'] }>
+                  <div
+                    data-testid="answer-options"
+                    id="answer-options"
+                    className={ styles['options-container'] }
+                  >
+                    {shuffledAnswers.map((answer, index) => {
+                      const id = answer === correctAnswer
+                        ? 'correct-answer' : `wrong-answer-${(incorrectId += 1)}`;
+                      const numberChar = 97;
+                      const answerLetter = String.fromCharCode(numberChar + index);
+
+                      return (
+                        <button
+                          key={ index }
+                          data-testid={ id }
+                          id={ id }
+                          onClick={ this.answerQuestion }
+                          disabled={ timer === 0 }
+                          className={ `${styles[id]} ${clickedAnswer && styles.clicked}` }
+                        >
+                          {clickedAnswer && (
+                            <img
+                              src={ answer === correctAnswer ? correctIcon : wrongIcon }
+                              alt="Answer Icon"
+                              className={ styles.icon }
+                            />
+                          )}
+                          {!clickedAnswer
+                            && (
+                              <span
+                                className={ styles['answer-letter'] }
+                              >
+                                {answerLetter}
+                              </span>
+                            )}
+                          {`${answer} `}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className={ styles['next-container'] }>
+                    {(timer === 0 || clickedAnswer) && (
+                      <button data-testid="btn-next" onClick={ this.goToNextQuestion }>
+                        PRÓXIMA
                       </button>
                     )}
+                  </div>
                 </div>
               </>
             ) : (
-              <h1>Loading...</h1>
+              <img src={ loadingIcon } alt="loading" className={ styles.loading } />
             )}
           </div>
+          <footer className={ styles.footer } />
         </div>
       </div>
     );
