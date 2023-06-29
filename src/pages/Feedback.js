@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Header from '../components/Header';
+import md5 from 'crypto-js/md5';
+
+import logo from '../assets/logo trivia.png';
 
 class Feedback extends React.Component {
   componentDidMount() {
@@ -22,6 +24,14 @@ class Feedback extends React.Component {
     localStorage.setItem('ranking', JSON.stringify(sortedRanking));
   }
 
+  getGravatarURL = () => {
+    const { email } = this.props;
+
+    const hash = md5(email).toString();
+    const url = `https://www.gravatar.com/avatar/${hash}`;
+    return url;
+  };
+
   handleNewGame = () => {
     const { history } = this.props;
     history.push('/');
@@ -35,40 +45,51 @@ class Feedback extends React.Component {
   render() {
     const { assertions, score } = this.props;
     const three = 3;
+
     return (
-      <div className="App">
-        <Header />
-        <main>
+      <div>
+        <div>
+          <img src={ logo } alt="logo-trivia" />
+        </div>
+        <div>
+          <img src={ this.getGravatarURL() } alt="gravatar-profile" />
           <h2 data-testid="feedback-text">
-            { assertions < three ? 'Could be better...' : 'Well Done!'}
+            { assertions < three ? 'Podia ser melhor...' : 'Mandou bem!'}
           </h2>
           <div>
             <p>
-              Score final:
-              {' '}
-              <span data-testid="feedback-total-score">{ score }</span>
-            </p>
-            <p>
-              Número de acertos:
+              Você acertou
               {' '}
               <span data-testid="feedback-total-question">{ assertions }</span>
+              {' '}
+              {assertions === 1 ? 'questão!' : 'questões!'}
+            </p>
+            <p>
+              Um total de
+              {' '}
+              <span data-testid="feedback-total-score">{ score }</span>
+              {' '}
+              pontos
             </p>
           </div>
-
-          <button
-            data-testid="btn-play-again"
-            onClick={ () => this.handleNewGame() }
-          >
-            Play Again
-          </button>
 
           <button
             data-testid="btn-ranking"
             onClick={ () => this.handleRanking() }
           >
-            Ranking
+            VER RANKING
           </button>
-        </main>
+
+          <button
+            data-testid="btn-play-again"
+            onClick={ () => this.handleNewGame() }
+          >
+            JOGAR NOVAMENTE
+          </button>
+        </div>
+        <div>
+          <footer />
+        </div>
       </div>
     );
   }
