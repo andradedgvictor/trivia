@@ -3,6 +3,11 @@ import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
 import { connect } from 'react-redux';
 
+import logo from '../assets/logo trivia.png';
+import star from '../assets/🦆 icon _Star_.png';
+
+import styles from '../styles/Ranking.module.css';
+
 class Ranking extends React.Component {
   handleNewGame = () => {
     const { history } = this.props;
@@ -21,24 +26,50 @@ class Ranking extends React.Component {
       };
 
       return (
-        <div key={ index }>
-          <img src={ getGravatarURL() } alt={ `player-img-${index}` } />
-          <p data-testid={ `player-name-${index}` }>{ name }</p>
-          <p data-testid={ `player-score-${index}` }>{ score }</p>
+        <div
+          className={ styles['player-content'] }
+          key={ index }
+        >
+          <div className={ styles['player-info'] }>
+            <img
+              src={ getGravatarURL() }
+              alt={ `player-img-${index}` }
+              className={ styles['player-img'] }
+            />
+            <p data-testid={ `player-name-${index}` }>{ name }</p>
+          </div>
+          <div className={ styles['player-score'] }>
+            <img src={ star } alt="star-score" />
+            <p data-testid={ `player-score-${index}` }>
+              <strong>{ score }</strong>
+              {' '}
+              pontos
+            </p>
+          </div>
         </div>
       );
     });
 
     return (
-      <div>
-        <h1 data-testid="ranking-title">Ranking</h1>
-        <button
-          data-testid="btn-go-home"
-          onClick={ this.handleNewGame }
-        >
-          Play Again
-        </button>
-        { renderRanking }
+      <div className={ styles['ranking-page'] }>
+        <div className={ styles['content-container'] }>
+          <div className={ styles['ranking-logo-container'] }>
+            <img src={ logo } alt="logo-trivia" />
+          </div>
+          <div className={ styles['ranking-container'] }>
+            <h1 data-testid="ranking-title">Ranking</h1>
+            <div className={ styles.ranking }>
+              { renderRanking }
+            </div>
+            <button
+              data-testid="btn-go-home"
+              onClick={ this.handleNewGame }
+              className={ styles['ranking-home-btn'] }
+            >
+              Jogar novamente
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
