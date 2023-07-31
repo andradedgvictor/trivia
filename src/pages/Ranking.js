@@ -43,7 +43,7 @@ class Ranking extends React.Component {
             <p data-testid={ `player-score-${index}` }>
               <strong>{ score }</strong>
               {' '}
-              pontos
+              points
             </p>
           </div>
         </div>

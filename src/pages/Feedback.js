@@ -49,20 +49,20 @@ class Feedback extends React.Component {
     const three = 3;
     const renderFeedbackScore = () => (
       <span data-testid="feedback-total-score">
-        Um total de
+        A total of
         {' '}
         {score}
         {' '}
-        pontos
+        points
       </span>
     );
     const renderFeedbackTotal = () => (
       <span data-testid="feedback-total-question">
-        Você acertou
+        You got
         {' '}
         { assertions }
         {' '}
-        {assertions === 1 ? 'questão!' : 'questões!'}
+        {assertions === 1 ? 'question right!' : 'questions right!'}
       </span>
     );
 
@@ -89,7 +89,7 @@ class Feedback extends React.Component {
                     ? styles['feedback-negative'] : styles['feedback-positive']
                 }
               >
-                { assertions < three ? 'Podia ser melhor...' : 'Mandou bem!'}
+                { assertions < three ? 'Could be better...' : 'Nice job!'}
               </h2>
               <p>{renderFeedbackTotal()}</p>
               <p>{renderFeedbackScore()}</p>
@@ -100,7 +100,7 @@ class Feedback extends React.Component {
                 onClick={ () => this.handleRanking() }
                 className={ styles['ranking-btn'] }
               >
-                VER RANKING
+                SEE RANKING
               </button>
 
               <button
@@ -108,7 +108,7 @@ class Feedback extends React.Component {
                 onClick={ () => this.handleNewGame() }
                 className={ styles['home-btn'] }
               >
-                JOGAR NOVAMENTE
+                PLAY AGAIN
               </button>
             </div>
           </div>

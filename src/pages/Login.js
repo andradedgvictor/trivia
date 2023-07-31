@@ -68,14 +68,14 @@ class Login extends React.Component {
             <input
               type="email"
               data-testid="input-gravatar-email"
-              placeholder="Qual é o seu e-mail do gravatar?"
+              placeholder="What is your Gravatar email?"
               name="email"
               onChange={ this.handleChange }
             />
             <input
               type="text"
               data-testid="input-player-name"
-              placeholder="Qual é o seu nome?"
+              placeholder="What is your name?"
               name="name"
               onChange={ this.handleChange }
             />
@@ -85,14 +85,14 @@ class Login extends React.Component {
               onClick={ this.handleLogin }
               className={ styles['play-btn'] }
             >
-              JOGAR
+              PLAY
             </button>
             <button
               data-testid="btn-settings"
               onClick={ this.goToSettings }
               className={ styles['settings-btn'] }
             >
-              Configurações
+              SETTINGS
             </button>
           </div>
         </div>

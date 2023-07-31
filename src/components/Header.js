@@ -29,7 +29,7 @@ class Header extends React.Component {
         </div>
         <div className={ styles['score-container'] }>
           <img src={ scoreImg } alt="score-img" />
-          <p data-testid="header-score">{ `Pontos: ${score}` }</p>
+          <p data-testid="header-score">{ `Points: ${score}` }</p>
         </div>
       </div>
     );

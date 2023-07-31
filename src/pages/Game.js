@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import he from 'he';
 
 import logo from '../assets/logo trivia.png';
 import timerIcon from '../assets/🦆 icon _timer_.png';
@@ -164,10 +165,8 @@ class Game extends Component {
                     </h1>
                   </div>
                   <div className={ styles['question-text-container'] }>
-                    <p
-                      data-testid="question-text"
-                    >
-                      {questions.results[questionIndex].question.split(':')[0]}
+                    <p data-testid="question-text">
+                      {he.decode(questions.results[questionIndex].question.split(':')[0])}
                     </p>
                   </div>
                   <div className={ styles['timer-container'] }>
@@ -211,7 +210,7 @@ class Game extends Component {
                                 {answerLetter}
                               </span>
                             )}
-                          {`${answer} `}
+                          {he.decode(answer)}
                         </button>
                       );
                     })}
@@ -219,7 +218,7 @@ class Game extends Component {
                   <div className={ styles['next-container'] }>
                     {(timer === 0 || clickedAnswer) && (
                       <button data-testid="btn-next" onClick={ this.goToNextQuestion }>
-                        PRÓXIMA
+                        NEXT
                       </button>
                     )}
                   </div>
