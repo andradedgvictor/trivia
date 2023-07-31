@@ -50,5 +50,5 @@ Para executar o projeto em sua máquina local, siga as etapas abaixo:
 
 Se tiver alguma dúvida ou sugestão, entre em contato comigo pelo email ou linkedin.
 
-[<img src="https://github.com/andradedgvictor/trivia/blob/main/public/outlook.png?raw=true" width="70" height="70" style="border-radius:50%">](mailto:victorandrademg@outlook.com)
-[<img src="https://github.com/andradedgvictor/trivia/blob/main/public/linkedin.jpg?raw=true" width="70" height="70" style="border-radius:50%">](https://www.linkedin.com/in/andradedgvictor)
+[<img src="https://github.com/andradedgvictor/trivia/blob/main/public/outlook.png?raw=true" width="70" height="70">](mailto:victorandrademg@outlook.com)
+[<img src="https://github.com/andradedgvictor/trivia/blob/main/public/linkedin.png?raw=true" width="70" height="70">](https://www.linkedin.com/in/andradedgvictor)
