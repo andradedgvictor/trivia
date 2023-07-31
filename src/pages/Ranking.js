@@ -66,7 +66,7 @@ class Ranking extends React.Component {
               onClick={ this.handleNewGame }
               className={ styles['ranking-home-btn'] }
             >
-              Jogar novamente
+              PLAY AGAIN
             </button>
           </div>
         </div>

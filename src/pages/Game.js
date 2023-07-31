@@ -240,7 +240,6 @@ const mapStateToProps = (state) => ({
   name: state.player.name,
   score: state.player.score,
 });
-
 Game.propTypes = {
   dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
