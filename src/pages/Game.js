@@ -5,8 +5,6 @@ import he from 'he';
 
 import logo from '../assets/logo trivia.png';
 import timerIcon from '../assets/🦆 icon _timer_.png';
-import correctIcon from '../assets/correct.png';
-import wrongIcon from '../assets/wrong.png';
 import loadingIcon from '../assets/loading.gif';
 import { fetchAPIQuestions, sumScore } from '../redux/actions';
 import Header from '../components/Header';
@@ -38,9 +36,13 @@ class Game extends Component {
         return;
       }
 
-      const { correct_answer, incorrect_answers, difficulty } = questions.results[questionIndex];
-      const answers = [correct_answer, ...incorrect_answers];
-      const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
+      const {
+        correct_answer: correctAnswer,
+        incorrect_answers: incorrectAnswers,
+        difficulty } = questions.results[questionIndex];
+      const answers = [correctAnswer, ...incorrectAnswers];
+      const min = 0.5;
+      const shuffledAnswers = [...answers].sort(() => Math.random() - min);
 
       this.setState({
         questions,
@@ -101,7 +103,14 @@ class Game extends Component {
     const { dispatch } = this.props;
     const { timer, difficulty } = this.state;
     const minDifficulty = 3;
-    const difficultyBonus = difficulty === 'hard' ? minDifficulty : difficulty === 'medium' ? 2 : 1;
+    let difficultyBonus;
+    if (difficulty === 'hard') {
+      difficultyBonus = minDifficulty;
+    } else if (difficulty === 'medium') {
+      difficultyBonus = 2;
+    } else {
+      difficultyBonus = 1;
+    }
     const minPoints = 10;
     const totalPoints = minPoints + timer * difficultyBonus;
     dispatch(sumScore(totalPoints));
@@ -124,9 +133,14 @@ class Game extends Component {
       button.style.border = 'revert';
     });
 
-    const { correct_answer, incorrect_answers, difficulty } = questions.results[questionIndex + 1];
-    const answers = [correct_answer, ...incorrect_answers];
-    const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
+    const {
+      correct_answer: correctAnswer,
+      incorrect_answers: incorrectAnswers,
+      difficulty,
+    } = questions.results[questionIndex + 1];
+    const answers = [correctAnswer, ...incorrectAnswers];
+    const min = 0.5;
+    const shuffledAnswers = [...answers].sort(() => Math.random() - min);
 
     this.setState((prevState) => ({
       questionIndex: prevState.questionIndex + 1,
