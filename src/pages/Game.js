@@ -10,6 +10,8 @@ import wrongIcon from '../assets/wrong.png';
 import loadingIcon from '../assets/loading.gif';
 import { fetchAPIQuestions, sumScore } from '../redux/actions';
 import Header from '../components/Header';
+import AnswerOption from '../components/AnswerOption';
+import NextButton from '../components/NextButton';
 
 import styles from '../styles/Game.module.css';
 
@@ -143,8 +145,6 @@ class Game extends Component {
       questions, questionIndex, isLoaded,
       shuffledAnswers, correctAnswer, timer, clickedAnswer,
     } = this.state;
-    const startingNumber = -1;
-    let incorrectId = startingNumber;
 
     return (
       <div className={ styles['game-page'] }>
@@ -180,48 +180,22 @@ class Game extends Component {
                     id="answer-options"
                     className={ styles['options-container'] }
                   >
-                    {shuffledAnswers.map((answer, index) => {
-                      const id = answer === correctAnswer
-                        ? 'correct-answer' : `wrong-answer-${(incorrectId += 1)}`;
-                      const numberChar = 97;
-                      const answerLetter = String.fromCharCode(numberChar + index);
-
-                      return (
-                        <button
-                          key={ index }
-                          data-testid={ id }
-                          id={ id }
-                          onClick={ this.answerQuestion }
-                          disabled={ timer === 0 }
-                          className={ `${styles[id]} ${clickedAnswer && styles.clicked}` }
-                        >
-                          {clickedAnswer && (
-                            <img
-                              src={ answer === correctAnswer ? correctIcon : wrongIcon }
-                              alt="Answer Icon"
-                              className={ styles.icon }
-                            />
-                          )}
-                          {!clickedAnswer
-                            && (
-                              <span
-                                className={ styles['answer-letter'] }
-                              >
-                                {answerLetter}
-                              </span>
-                            )}
-                          {he.decode(answer)}
-                        </button>
-                      );
-                    })}
+                    {shuffledAnswers.map((answer, index) => (
+                      <AnswerOption
+                        key={ index }
+                        answer={ answer }
+                        index={ index }
+                        correctAnswer={ correctAnswer }
+                        clickedAnswer={ clickedAnswer }
+                        onClick={ this.answerQuestion }
+                      />
+                    ))}
                   </div>
-                  <div className={ styles['next-container'] }>
-                    {(timer === 0 || clickedAnswer) && (
-                      <button data-testid="btn-next" onClick={ this.goToNextQuestion }>
-                        NEXT
-                      </button>
-                    )}
-                  </div>
+                </div>
+                <div className={ styles['next-container'] }>
+                  {(timer === 0 || clickedAnswer) && (
+                    <NextButton onClick={ this.goToNextQuestion } />
+                  )}
                 </div>
               </>
             ) : (
@@ -240,6 +214,7 @@ const mapStateToProps = (state) => ({
   name: state.player.name,
   score: state.player.score,
 });
+
 Game.propTypes = {
   dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
